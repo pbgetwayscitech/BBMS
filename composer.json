@@ -1,0 +1,14 @@
+{
+    "name": "pb/bbms",
+    "description": "Blood Bank Management System",
+    "type": "project",
+    "require": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "authors": [
+        {
+            "name": "Pappu Biswas"
+        }
+    ],
+    "minimum-stability": "stable"
+}

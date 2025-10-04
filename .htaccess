@@ -1,0 +1,11 @@
+ErrorDocument 404 /src/pages/error.php
+RewriteEngine On
+RewriteRule ^(\.env|\.gitignore|composer\.json|composer\.lock|.*\.json)$ /index.php [L,R=302]
+ RewriteCond %{HTTPS} off
+ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+Options -Indexes
+<Files .htaccess>
+   Order Allow,Deny
+   Deny from all
+</Files>
+

@@ -1,0 +1,6 @@
+# vendor/.htaccess
+# Deny from all
+
+# Redirect all direct access to vendor to index.php
+RewriteEngine On
+RewriteRule ^.*$ /index.php [L,R=302]

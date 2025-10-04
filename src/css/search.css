@@ -1,0 +1,42 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.search-container {
+    background-color: #ffffff;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.search-button {
+    background-color: #dc2626;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #ef4444;
+}
+
+.filter-section {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+}
+
+.message-box-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.message-box-content {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}

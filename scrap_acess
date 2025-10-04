@@ -1,0 +1,149 @@
+
+# 1. ENFORCE HTTPS (SSL/TLS)
+# Redirects all HTTP traffic to HTTPS to ensure secure communication.
+# IMPORTANT: Replace 'yourdomain.com' with your actual domain name.
+# This rule should be placed at the very top of your .htaccess file.
+# ---------------------------------------------------
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ---------------------------------------------------
+# 2. HIDE DIRECTORY LISTINGS
+# Prevents visitors from seeing the contents of directories if no index file is present.
+# This is a security best practice.
+# ---------------------------------------------------
+Options -Indexes
+
+# ---------------------------------------------------
+# 3. SET DEFAULT INDEX FILE(S)
+# Specifies the order in which files are searched for when a directory is accessed.
+# 'index.php' is prioritized for your PHP application.
+# ---------------------------------------------------
+DirectoryIndex index.php index.html
+
+# ---------------------------------------------------
+# 4. RESTRICT ACCESS TO SENSITIVE FILES AND DIRECTORIES
+# Prevents direct web access to sensitive configuration files, .htaccess itself,
+# and other directories that should not be publicly browsable.
+# Adjust paths as per your project structure (e.g., 'main/', 'includes/').
+# ---------------------------------------------------
+
+# Deny access to .htaccess file itself
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Deny access to common configuration or PHP backend files not meant for direct access
+# Assuming 'main' contains core PHP logic, 'includes' for functions, etc.
+# Adjust or add more paths as needed.
+<FilesMatch "\.(php|inc|tpl|log)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Deny access to specific directories (e.g., node_modules, main if it only contains backend logic)
+# This assumes 'node_modules' is at the root and 'main' is a sub-directory containing PHP logic
+# If 'main' contains front-end assets that need to be served, this rule might need adjustment
+# to allow specific file types or specific sub-directories.
+# Example: Deny all but allow specific front-end assets (if any)
+RewriteRule ^(node_modules|main|includes)/ - [F,NC]
+
+
+# ---------------------------------------------------
+# 5. FRIENDLY URLS (URL Rewriting for Clean URLs)
+# This section uses mod_rewrite to create "pretty" URLs (e.g., /auth/login instead of /auth/login.php).
+# This is a basic rule to route all non-file/non-directory requests to index.php.
+# Adjust as per your specific routing needs.
+# ---------------------------------------------------
+<IfModule mod_rewrite.c>
+    # Enable Rewrite Engine if not already enabled above for HTTPS redirect
+    RewriteEngine On
+
+    # Prevent looping if index.php (or index.html) already handles the request
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rewrite all requests not pointing to a real file or directory to index.php
+    # This assumes your routing logic is handled by index.php
+    # If your application uses other entry points, adjust this rule accordingly.
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# ---------------------------------------------------
+# 6. ENFORCE UTF-8 ENCODING
+# Ensures consistent character encoding for web content.
+# ---------------------------------------------------
+AddDefaultCharset UTF-8
+
+# ---------------------------------------------------
+# 7. HSTS (HTTP Strict Transport Security) - Highly Recommended for HTTPS Sites
+# Tells browsers to always connect to your site using HTTPS, even if they try HTTP.
+# This helps prevent downgrade attacks and cookie hijacking.
+# max-age: How long (in seconds) the browser should remember to use HSTS for your site. (31536000 seconds = 1 year)
+# includeSubDomains: Apply HSTS to all subdomains as well.
+# preload: Allows you to submit your domain to an HSTS preload list for major browsers.
+# IMPORTANT: ONLY enable HSTS AFTER you are absolutely certain your site works perfectly
+# over HTTPS for ALL resources (including all subdomains, if includeSubDomains is used).
+# If you make a mistake, it can be very difficult to revert for users who have visited your site.
+# ---------------------------------------------------
+# <IfModule mod_headers.c>
+#     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+# </IfModule> --> -->
+
+
+<!-- # Define Error PHP Page
+ErrorDocument 404 /src/pages/error.php
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Block hidden files and sensitive configs insted redirect them
+RewriteRule ^(\.env|\.gitignore|composer\.json|composer\.lock|.*\.json)$ /index.php [L,R=302]
+# use to block access "- [F,L]"
+
+# ENFORCE HTTPS (SSL/TLS)
+ RewriteCond %{HTTPS} off
+ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# HIDE DIRECTORY LISTINGS # Prevents visitors from seeing the contents of directories if no index file is present.
+Options -Indexes
+
+# SET DEFAULT INDEX FILE(S)
+# DirectoryIndex index.php index.html
+
+# RESTRICT ACCESS TO .htaccess
+<Files .htaccess>
+   Order Allow,Deny
+   Deny from all
+</Files> -->
+
+# Deny access to common configuration or PHP backend files not meant for direct access
+# <FilesMatch "\.(php|inc|tpl|log)$">
+#    Order Allow,Deny
+#    Deny from all
+# </FilesMatch>
+
+# Deny access to specific directories (e.g., node_modules, main if it only contains backend logic)
+# RewriteRule ^(node_modules|main|includes)/ - [F,NC]
+
+# FRIENDLY URLS (URL Rewriting for Clean URLs)
+# <IfModule mod_rewrite.c>
+#    # Prevent looping if index.php (or index.html) already handles the request
+#    RewriteCond %{REQUEST_FILENAME} !-f
+#    RewriteCond %{REQUEST_FILENAME} !-d
+
+#    RewriteRule ^ index.php [L]
+# </IfModule>
+
+# ENFORCE UTF-8 ENCODING
+# AddDefaultCharset UTF-8
+
+# HSTS (HTTP Strict Transport Security) - Highly Recommended for HTTPS Sites
+# max-age: How long (in seconds) the browser should remember to use HSTS for your site. (31536000 seconds = 1 year)
+# includeSubDomains: Apply HSTS to all subdomains as well.
+# preload: Allows you to submit your domain to an HSTS preload list for major browsers.
+# <IfModule mod_headers.c>
+#     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+# </IfModule> --> -->
