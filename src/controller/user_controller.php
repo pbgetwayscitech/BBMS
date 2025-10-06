@@ -13,8 +13,8 @@
  */
 function search_user_with_email($email_id)
 {
-    require_once "../../config/db.php";
-    require_once "../../model/genDonor.php";
+    require_once __DIR__ . "../../config/db.php";
+    require_once __DIR__ . "../../model/genDonor.php";
 
     $conn = prepare_new_connection();
 
@@ -78,8 +78,8 @@ function search_user_with_email($email_id)
  */
 function find_user_detail_with_donor_id($donor_id)
 {
-    require_once "../../config/db.php";
-    require_once "../../model/genDonor.php";
+    require_once __DIR__ . "../../config/db.php";
+    require_once __DIR__ . "../../model/genDonor.php";
 
     if (empty($donor_id)) {
         return null;
@@ -148,8 +148,8 @@ function find_user_detail_with_donor_id($donor_id)
  */
 function find_user_detail_with_phone($phone_number)
 {
-    require_once "../../config/db.php";
-    require_once "../../model/genDonor.php";
+    require_once __DIR__ . "../../config/db.php";
+    require_once __DIR__ . "../../model/genDonor.php";
 
     if (trim($phone_number) == '' || sizeof(str_split($phone_number)) != 10 || !is_numeric($phone_number)) {
         return null;
@@ -224,8 +224,8 @@ function find_user_detail_with_phone($phone_number)
  */
 function find_user_with_bg_in_state($blood_group, $state_code)
 {
-    require_once "../../config/db.php";
-    require_once "../../model/genDonor.php";
+    require_once __DIR__ . "../../config/db.php";
+    require_once __DIR__ . "../../model/genDonor.php";
 
     $conn = prepare_new_connection();
     $records = [];
@@ -392,7 +392,14 @@ function register_user(
         $dob
     );
 
-    $exr = mysqli_stmt_execute($stmt);
+    try {
+        $exr = mysqli_stmt_execute($stmt);
+    } catch (mysqli_sql_exception $e) {
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+        return false;
+    }
+
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
     return $exr;

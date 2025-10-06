@@ -13,6 +13,18 @@ class BloodStockTest extends TestCase
 
     protected function setUp(): void
     {
+
+        $GLOBALS['blood_groups'] = [
+            'ap' => 'A+',
+            'a' => 'A-',
+            'bp' => 'B+',
+            'b' => 'B-',
+            'op' => 'O+',
+            'o' => 'O-',
+            'abp' => 'AB+',
+            'ab' => 'AB-',
+        ];
+
         $this->conn = prepare_new_connection();
         $this->assertNotNull($this->conn, "Database connection failed.");
     }
@@ -71,7 +83,7 @@ class BloodStockTest extends TestCase
         $stock_id = $this->conn->insert_id;
 
         $result = update_blood_Stock_status($this->blood_stock_table, $stock_id, "utilised");
-        $this->assertTrue($result, "Failed to update stock status to utilised.");
+        $this->assertTrue($result, "Failed to update stock status to utilised for id {$stock_id}.");
 
         $res = $this->conn->query("SELECT stock_status FROM {$this->blood_stock_table} WHERE stock_id = {$stock_id}");
         $row = $res->fetch_assoc();

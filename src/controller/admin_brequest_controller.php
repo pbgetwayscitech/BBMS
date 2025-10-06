@@ -1,5 +1,6 @@
 <?php
 
+use PHPUnit\Event\Code\Throwable;
 use function PHPUnit\Framework\throwException;
 
 /**
@@ -17,6 +18,8 @@ function add_blood_request($requests_table, BankIdBloodRequest $req)
 {
     require_once __DIR__ . '../../config/db.php';
     require_once __DIR__ . '../../model/bankIdBloodRequest.php';
+    require_once __DIR__ . '../../config/code_bloodgroups.php';
+    global $blood_groups;
 
     $conn = prepare_new_connection();
 
@@ -34,6 +37,14 @@ function add_blood_request($requests_table, BankIdBloodRequest $req)
     $status = $req->getStatus();
 
 
+    // .......
+    //blood group check
+
+    if (!key_exists($requested_blood_group, $blood_groups)) {
+        return false;
+    }
+
+
     $stmt = $conn->prepare("
             INSERT INTO {$requests_table}
             (requested_by, requested_by_id, requested_blood_group, requested_for, bank_id, requested_on, note, status)
@@ -48,11 +59,8 @@ function add_blood_request($requests_table, BankIdBloodRequest $req)
     $result = $stmt->execute();
     $stmt->close();
     $conn->close();
-    if (!$result) {
-        return false;
-    }
 
-    return true;
+    return $result;
 }
 
 /**
@@ -77,6 +85,17 @@ function update_request_status($requests_table, $request_id, $new_status, $bank_
     if (!$conn) {
         return false;
     }
+
+    $check_stmt = $conn->prepare("SELECT * from {$requests_table} WHERE request_id = ? LIMIT 1");
+    $check_stmt->bind_param("i", $request_id);
+    $check_stmt->execute();
+    $mresult = $check_stmt->get_result();
+    if (!$mresult || mysqli_num_rows($mresult) === 0) {
+        $check_stmt->close();
+        $conn->close();
+        return false;
+    }
+    $check_stmt->close();
 
     $stmt = $conn->prepare("
             UPDATE {$requests_table}

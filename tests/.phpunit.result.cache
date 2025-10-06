@@ -1,1 +1,1 @@
-{"version":2,"defects":[],"times":{"UserTest::testFindByEmailReturnsUser":0.023}}
+{"version":2,"defects":{"BloodStockTest::testUpdateBloodStockStatusValid":7,"UserRecordTest::testAddDataToUserRecord":7},"times":{"UserTest::testFindByEmailReturnsUser":0.023,"BloodStockTest::testUpdateBloodStockStatusValid":0.047,"UserRecordTest::testAddDataToUserRecord":0.037}}

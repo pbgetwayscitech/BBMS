@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . "/../src/controller/reports_controller.php";
-require_once __DIR__ . "/../src/config/db.php";
+require_once __DIR__ . "../../src/controller/reports_controller.php";
+require_once __DIR__ . "../../src/config/db.php";
 
 class ReportsTest extends TestCase
 {
@@ -21,13 +21,16 @@ class ReportsTest extends TestCase
 
         // Insert sample donors
         $this->conn->query("INSERT INTO gen_donors (full_name, blood_group, state_code, gender, email_id, phone_number, password_hash , unique_id)
-                            VALUES ('Donor1', 'A+', 1, 'Male', 'donor1@test.com', '9999999991', 'pass', '7418523')");
+                            VALUES ('Donor1', 'ap', 1, 'Male', 'donor1@test.com', '9999999991', 'pass', '7418523')");
         $this->conn->query("INSERT INTO gen_donors (full_name, blood_group, state_code, gender, email_id, phone_number, password_hash, unique_id)
-                            VALUES ('Donor2', 'B+', 2, 'Female', 'donor2@test.com', '9999999992', 'pass', '65428')");
+                            VALUES ('Donor2', 'bp', 2, 'Female', 'donor2@test.com', '9999999992', 'pass', '65428')");
     }
 
     protected function tearDown(): void
     {
+
+        $this->conn->query("DELETE FROM blood_banks WHERE bank_id in (SELECT bank_id FROM (SELECT bank_id FROM blood_banks) AS temp)");
+        $this->conn->query("DELETE FROM gen_donors WHERE donor_id in (SELECT donor_id FROM (SELECT donor_id FROM gen_donors) AS temp)");
         if ($this->conn) {
             $this->conn->close();
         }
@@ -92,13 +95,13 @@ class ReportsTest extends TestCase
 
     public function testGetDonorCountWithBloodGroup()
     {
-        $countA = get_donor_count_with_blood_group('A+');
+        $countA = get_donor_count_with_blood_group('ap');
         $this->assertEquals(1, $countA);
 
-        $countB = get_donor_count_with_blood_group('B+');
+        $countB = get_donor_count_with_blood_group('bp');
         $this->assertEquals(1, $countB);
 
-        $countO = get_donor_count_with_blood_group('O+');
+        $countO = get_donor_count_with_blood_group('op');
         $this->assertEquals(0, $countO);
     }
 

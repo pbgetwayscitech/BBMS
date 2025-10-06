@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../src/controller/admin_controller.php';
+require_once __DIR__ . '/../src/controller/search_controller.php';
 require_once __DIR__ . '/../src/config/db.php';
 require_once __DIR__ . '/../src/model/bloodBank.php';
 require_once __DIR__ . '/../src/model/bankIdBloodRequest.php';
@@ -65,6 +65,7 @@ class SearchTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->conn->query("DELETE FROM blood_banks WHERE bank_id in (SELECT bank_id FROM (SELECT bank_id FROM blood_banks) AS temp)");
         $this->conn->close();
     }
 
@@ -112,7 +113,7 @@ class SearchTest extends TestCase
         $record = new UniqueIdRecord(
             record_number: '1',
             record_type: 'Donation',
-            blood_group: 'A+',
+            blood_group: 'ap',
             note: 'Test note',
             bank_id: 1,
             date: date('Y-m-d')
@@ -121,7 +122,7 @@ class SearchTest extends TestCase
         $result = add_data_to_user_record($this->userRecordTable, $record);
         $this->assertTrue($result);
 
-        $res = $this->conn->query("SELECT * FROM {$this->userRecordTable} WHERE record_number='R001'");
+        $res = $this->conn->query("SELECT * FROM {$this->userRecordTable} WHERE record_number='1'");
         $this->assertEquals(1, $res->num_rows);
     }
 }

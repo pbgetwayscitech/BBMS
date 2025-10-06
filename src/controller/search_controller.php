@@ -18,10 +18,10 @@
 function search_bank_with_criteria($search_query, $blood_group, $state_id)
 {
 
-    require_once __DIR__ . '../config/db.php';
-    require_once __DIR__ . '../config/code_bloodgroups.php';
-    require_once __DIR__ . '../config/code_states.php';
-    require_once __DIR__ . '../model/bloodBank.php';
+    require_once __DIR__ . '../../config/db.php';
+    require_once __DIR__ . '../../config/code_bloodgroups.php';
+    require_once __DIR__ . '../../config/code_states.php';
+    require_once __DIR__ . '../../model/bloodBank.php';
     global $blood_groups;
     global $states;
 
@@ -96,8 +96,8 @@ function search_bank_with_criteria($search_query, $blood_group, $state_id)
  */
 function add_blood_request($requests_table, BankIdBloodRequest $req)
 {
-    require_once __DIR__ . '../config/db.php';
-    require_once __DIR__ . '../model/bankIdBloodRequest.php';
+    require_once __DIR__ . '../../config/db.php';
+    require_once __DIR__ . '../../model/bankIdBloodRequest.php';
 
     $conn = prepare_new_connection();
 
@@ -148,8 +148,8 @@ function add_blood_request($requests_table, BankIdBloodRequest $req)
  */
 function add_data_to_user_record($table_name, UniqueIdRecord $rec)
 {
-    require_once __DIR__ . '../config/db.php';
-    require_once __DIR__ . '../model/UniqueIDRecords.php';
+    require_once __DIR__ . '../../config/db.php';
+    require_once __DIR__ . '../../model/UniqueIDRecords.php';
 
     $conn = prepare_new_connection();
     if (!$conn) {
@@ -165,9 +165,8 @@ function add_data_to_user_record($table_name, UniqueIdRecord $rec)
 
     $sql_query = "INSERT INTO $table_name (record_number, record_type, blood_group, note, bank_id, date)VALUES(?,?,?,?,?,?)";
     $stmt = $conn->prepare($sql_query);
-    $stmt->bind_param("ssssss", $record_number, $record_type, $blood_group, $note, $bank_id, $date);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->bind_param("isssis", $record_number, $record_type, $blood_group, $note, $bank_id, $date);
+    $result = $stmt->execute();
     $stmt->close();
 
     $conn->close();

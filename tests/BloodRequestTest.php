@@ -12,6 +12,30 @@ class BloodRequestTest extends TestCase
 
     protected function setUp(): void
     {
+
+        $GLOBALS['filter_requests'] = [
+            'all' => 'All',
+            'request_id' => 'Request ID',
+            'requested_by' => 'Requested By',
+            'requested_by_id' => 'Requested By ID',
+            'requested_blood_group' => 'Requested Blood Group',
+            'requested_for' => 'Requested for',
+            'requested_on' => 'Requested On',
+            'note' => 'Note',
+            'status' => 'Status',
+        ];
+
+        $GLOBALS['blood_groups'] = [
+            'ap' => 'A+',
+            'a' => 'A-',
+            'bp' => 'B+',
+            'b' => 'B-',
+            'op' => 'O+',
+            'o' => 'O-',
+            'abp' => 'AB+',
+            'ab' => 'AB-',
+        ];
+
         $this->conn = prepare_new_connection();
         $this->assertNotNull($this->conn, "Database connection failed in setup.");
     }
@@ -84,34 +108,31 @@ class BloodRequestTest extends TestCase
         $this->assertFalse($result, "Updated a non-existent request ID.");
     }
 
-    // public function testSearchFromRequestsAll()
-    // {
-    //     require_once __DIR__ . "/../src/config/filter_searchBrequests.php";
-    //     global $filter_requests;
+    public function testSearchFromRequestsAll()
+    {
+        // Insert dummy requests
+        $this->conn->query("
+            INSERT INTO {$this->requests_table}
+            (requested_by, requested_by_id, requested_blood_group, requested_for, bank_id, requested_on, note, status)
+            VALUES ('Searcher', 105, 'o', 206, 1, CURDATE(), 'Test Search', 'requested')
+        ");
 
-    //     // Insert dummy requests
-    //     $this->conn->query("
-    //         INSERT INTO {$this->requests_table}
-    //         (requested_by, requested_by_id, requested_blood_group, requested_for, bank_id, requested_on, note, status)
-    //         VALUES ('Searcher', 105, 'o', 206, 1, CURDATE(), 'Test Search', 'requested')
-    //     ");
-
-    //     $records = search_from_requests($this->requests_table, "all", "Searcher");
-    //     $this->assertNotEmpty($records, "Search returned no records when it should.");
-    //     $this->assertInstanceOf(BankIdBloodRequest::class, $records[0]);
-    // }
+        $records = search_from_requests($this->requests_table, "all", "Searcher");
+        $this->assertNotEmpty($records, "Search returned no records when it should.");
+        $this->assertInstanceOf(BankIdBloodRequest::class, $records[0]);
+    }
 
 
-    // public function testSearchFromRequestsInvalidFilter()
-    // {
-    //     // Insert dummy request
-    //     $this->conn->query("
-    //         INSERT INTO {$this->requests_table}
-    //         (requested_by, requested_by_id, requested_blood_group, requested_for, bank_id, requested_on, note, status)
-    //         VALUES ('NoFilter', 106, 'op', 207, 1, CURDATE(), 'Invalid filter test', 'requested')
-    //     ");
+    public function testSearchFromRequestsInvalidFilter()
+    {
+        // Insert dummy request
+        $this->conn->query("
+            INSERT INTO {$this->requests_table}
+            (requested_by, requested_by_id, requested_blood_group, requested_for, bank_id, requested_on, note, status)
+            VALUES ('NoFilter', 106, 'op', 207, 1, CURDATE(), 'Invalid filter test', 'requested')
+        ");
 
-    //     $records = search_from_requests($this->requests_table, "invalid_filter", "NoFilter");
-    //     $this->assertNotEmpty($records, "Search with invalid filter should return all records.");
-    // }
+        $records = search_from_requests($this->requests_table, "invalid_filter", "NoFilter");
+        $this->assertNotEmpty($records, "Search with invalid filter should return all records.");
+    }
 }

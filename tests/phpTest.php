@@ -1,3 +1,5 @@
+<!-- This is the file for test file strucuture and command collection -->
+
 // <?php
 
 // echo " root .. " . $_SERVER['DOCUMENT_ROOT'] . "/src/config/db.php";

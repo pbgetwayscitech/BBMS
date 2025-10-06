@@ -11,7 +11,7 @@
  */
 function get_banks_count_with_state_id($state_id)
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT bank_id FROM blood_banks WHERE state_id = $state_id");
     $stmt->execute();
@@ -31,7 +31,7 @@ function get_banks_count_with_state_id($state_id)
  */
 function get_total_blood_stock_by_blood_group($blood_group)
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
 
     $stmt = $conn->prepare("SELECT $blood_group AS bg FROM blood_banks WHERE $blood_group > 0");
@@ -57,7 +57,7 @@ function get_total_blood_stock_by_blood_group($blood_group)
  */
 function get_total_banks()
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT bank_id FROM blood_banks");
     $stmt->execute();
@@ -77,7 +77,7 @@ function get_total_banks()
  */
 function get_donor_count_by_state_id($state_id)
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT donor_id FROM gen_donors WHERE state_code = ?");
     $stmt->bind_param("i", $state_id);
@@ -98,7 +98,7 @@ function get_donor_count_by_state_id($state_id)
  */
 function get_donor_count_with_gender($gender)
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT donor_id FROM gen_donors WHERE gender = ?");
     $stmt->bind_param("s", $gender);
@@ -119,7 +119,7 @@ function get_donor_count_with_gender($gender)
  */
 function get_donor_count_with_blood_group($blood_group)
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT donor_id FROM gen_donors WHERE blood_group = ?");
     $stmt->bind_param("s", $blood_group);
@@ -139,7 +139,7 @@ function get_donor_count_with_blood_group($blood_group)
  */
 function get_total_donor_count()
 {
-    require_once __DIR__ . '../config/db.php';
+    require_once __DIR__ . '../../config/db.php';
     $conn = prepare_new_connection();
     $stmt = $conn->prepare("SELECT donor_id FROM gen_donors");
     $stmt->execute();

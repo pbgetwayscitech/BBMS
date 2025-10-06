@@ -16,6 +16,8 @@ function add_new_donation($blood_stock_tablename, BankIdBloodStock $stock_data)
 {
     require_once __DIR__ . '../../config/db.php';
     require_once __DIR__ . '../../model/bankIDbloodStock.php';
+    require_once __DIR__ . '../../config/code_bloodgroups.php';
+    global $blood_groups;
 
     $conn = prepare_new_connection();
 
@@ -31,6 +33,10 @@ function add_new_donation($blood_stock_tablename, BankIdBloodStock $stock_data)
     $note = $stock_data->getNote();
     $stock_status = $stock_data->getStockStatus();
     $date = $stock_data->getDonationDate();
+
+    if (!array_key_exists($blood_group, $blood_groups)) {
+        return false;
+    }
 
     try {
         $conn->begin_transaction();
@@ -72,7 +78,7 @@ function update_blood_Stock_status($blood_stock_tablename, $stock_id, $new_statu
 {
     require_once __DIR__ . '../../config/db.php';
 
-    if ($blood_stock_tablename == '' || $stock_id = '' || !in_array($new_status, ['utilised', 'discarded'], true)) {
+    if ($blood_stock_tablename == '' || $stock_id == '' || !in_array($new_status, ['utilised', 'discarded'], true)) {
         return false;
     }
 
@@ -80,6 +86,19 @@ function update_blood_Stock_status($blood_stock_tablename, $stock_id, $new_statu
     if (!$conn) {
         return false;
     }
+
+    // Check if stock_id exists
+    $stmt_check = $conn->prepare("SELECT * FROM {$blood_stock_tablename} WHERE stock_id = ? LIMIT 1");
+    $stmt_check->bind_param("i", $stock_id);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+    if (!$result_check || mysqli_num_rows($result_check) === 0) {
+        $stmt_check->close();
+        $conn->close();
+        return false;
+    }
+    $stmt_check->close();
+
 
     $stmt = $conn->prepare("
             UPDATE {$blood_stock_tablename}
